@@ -38,8 +38,9 @@ bool is_image_valid(uint8_t* filename) {
 	return true;
 }
 
+/*
 uint32_t update_prev_loaded_memcard_index(uint32_t index) {
-	/* update the previously loaded memcard index stored on the SD card */
+	// update the previously loaded memcard index stored on the SD card
 	uint32_t retVal = MM_OK;
 	FIL data_file;
 	uint32_t buff_size = 100;
@@ -68,6 +69,7 @@ uint32_t update_prev_loaded_memcard_index(uint32_t index) {
 	f_close(&data_file);
 	return retVal;
 }
+*/
 
 bool memcard_manager_exist(uint8_t* filename) {
 	if(!filename)
@@ -116,6 +118,7 @@ uint32_t memcard_manager_get(uint32_t index, uint8_t* out_filename) {
 	return MM_OK;
 }
 
+// keep if user wants to manually assign
 uint32_t memcard_manager_get_prev_loaded_memcard_index() {
 	/* read which memcard to load from last session from SD card */
 	uint32_t index = 0;
@@ -127,10 +130,12 @@ uint32_t memcard_manager_get_prev_loaded_memcard_index() {
 	char line[buff_size];
 	if (res == FR_OK) {
 		f_gets(line, sizeof(line), &data_file);
-		if(strncmp(line, "LASTMEMCARD:", 11) != 0){
+		if(strncmp(line, "LASTMEMCARD:", 11) != 0){ // We don't want to check for OOO.MCR because this is alowed to be changed by the user manually still.
 			char lastmem[MAX_MC_FILENAME_LEN + 13];
 			memset(lastmem, '\0', MAX_MC_FILENAME_LEN + 13);
-			strcat(lastmem, "LASTMEMCARD:\n");
+			// For clarity on how to change this, and also it is never set by any function anymore so looks weird
+            strcat(lastmem, "LASTMEMCARD:000.MCR\n");
+            //strcat(lastmem, "LASTMEMCARD:\n");
 			printf("LASTMEMCARD NOT PRESENT IN INDEX FILE, WRITING...\n");
 			f_puts(lastmem, &data_file);
 		}else{
@@ -333,7 +338,7 @@ uint32_t memcard_manager_create(uint8_t* out_filename) {
 	} else {
 		return MM_FILE_OPEN_ERR;
 	}
-	update_prev_loaded_memcard_index(memcard_n - 1);
+	//update_prev_loaded_memcard_index(memcard_n - 1);
 	return MM_OK;
 }
 
@@ -429,6 +434,7 @@ uint32_t create_index(uint8_t *vec, uint8_t size, uint8_t *out_filename){
 				strcpy(out_filename, new_name);
 
 				//updating lastmemcard id
+                /*
 				f_rewind(&fptr);
 				strcat(lastmem, "LASTMEMCARD:");
 				sprintf(buff, "%03d", atoi(new_name));
@@ -436,6 +442,7 @@ uint32_t create_index(uint8_t *vec, uint8_t size, uint8_t *out_filename){
 				strcat(lastmem, ".MCR\n");
 				f_puts(lastmem, &fptr);
 				printf("memcard is: %s\n", out_filename);
+                */
 			}else{
 				printf("\n COULD NOT FIND ':' CHAR FIX YOUR INDEX FILE\n");
 				f_close(&fptr);

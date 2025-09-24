@@ -332,7 +332,7 @@ void __time_critical_func(sel_isr_callback()) {
     // TODO refractor comment, also is __time_critical_func needed for speed? we should test if everything works without it!
     /* begin inlined call of:  gpio_acknowledge_irq(PIN_SEL, GPIO_IRQ_EDGE_RISE); kept in RAM for performance reasons */
     check_gpio_param(PIN_SEL);
-    iobank0_hw->intr[PIN_SEL / 8] = GPIO_IRQ_EDGE_RISE << (4 * (PIN_SEL % 8));
+    io_bank0_hw->intr[PIN_SEL / 8] = GPIO_IRQ_EDGE_RISE << (4 * (PIN_SEL % 8));
     /* end of inlined call */
     restart_pio_sm();
 }
@@ -444,7 +444,7 @@ _Noreturn int simulate_memory_card() {
                     /* switch mc */
                     strcpy(mc_file_name, new_file_name);
                     status = memory_card_import(&mc, mc_file_name);
-                    update_prev_loaded_memcard_index(atoi(mc_file_name));
+                    //update_prev_loaded_memcard_index(atoi(mc_file_name));
                     printf("mc is: %s\n", mc_file_name);
                     if(status != MC_OK)
                         led_blink_error(status);
